@@ -45,10 +45,11 @@ const HomePage = () => {
             return participants.map((p) => ({ id: p.id, payment: 0 }));
 
         return participants.map((participant) => {
-            const proportion = (participant.amount || 0) / totalOriginal;
+            const amount = Number(participant.amount) || 0;
+            const proportion = amount / totalOriginal;
             const payment = proportion * totalAfterDiscount;
 
-            return { id: participant.id, payment: payment || participant.amount };
+            return { id: participant.id, payment: Math.round(payment) };
         });
     }, [participants, totalOriginal, totalAfterDiscount]);
 

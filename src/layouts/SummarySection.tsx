@@ -40,7 +40,9 @@ const SummarySection: React.FC<SummarySectionProps> = (props) => {
 
             <div className='border-primary bg-primary/10 rounded-lg border p-4 shadow-sm'>
                 <p className='text-primary mb-1 text-sm font-medium'>Tổng Tiền Sau Giảm</p>
-                <p className='text-primary text-2xl font-bold'>{toPriceNumberString(String(totalAfterDiscount))}</p>
+                <p className='text-primary text-2xl font-bold'>
+                    {toPriceNumberString(String(totalAfterDiscount.toFixed(0)))}
+                </p>
             </div>
         </section>
     );
