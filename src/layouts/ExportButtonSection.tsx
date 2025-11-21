@@ -33,65 +33,75 @@ const ExportButtonSection: React.FC<ExportButtonSectionProps> = ({
     );
 
     const createCanvasImage = useCallback(async (): Promise<Blob> => {
+        const scale = 2; // tăng 2x cho ảnh nét
+        const baseWidth = 600;
+        const baseHeight = 150 + participants.length * 40 + (qrImage ? 250 : 0);
+
         const canvas = document.createElement('canvas');
+        canvas.width = baseWidth * scale;
+        canvas.height = baseHeight * scale;
+
         const ctx = canvas.getContext('2d')!;
+        ctx.scale(scale, scale); // scale context, font và vị trí tự nhân theo
 
-        canvas.width = 600;
-        canvas.height = 150 + participants.length * 40 + (qrImage ? 250 : 0);
-
+        /* Background */
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, baseWidth, baseHeight);
 
+        /* Border */
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2;
-        ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+        ctx.strokeRect(10, 10, baseWidth - 20, baseHeight - 20);
 
         let yPos = 40;
 
+        /* Title */
         ctx.fillStyle = '#000000';
         ctx.font = 'bold 28px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('💰 Danh Sách Chia Chi Phí', canvas.width / 2, yPos);
+        ctx.fillText('💰 Danh Sách Chia Chi Phí', baseWidth / 2, yPos);
 
         yPos += 35;
 
+        /* Total Cost */
         ctx.font = '14px Arial';
         ctx.fillStyle = '#666666';
         const totalText = `Chi Phí: ${formatCurrency(totalOriginal)} → ${formatCurrency(totalAfterDiscount)}`;
-        ctx.fillText(totalText, canvas.width / 2, yPos);
+        ctx.fillText(totalText, baseWidth / 2, yPos);
 
         yPos += 35;
 
+        /* Table Header */
         ctx.fillStyle = '#000000';
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'left';
         ctx.fillText('Tên', 30, yPos);
         ctx.textAlign = 'right';
-        ctx.fillText('Chi Phí Gốc', canvas.width - 150, yPos);
-        ctx.fillText('Thanh Toán', canvas.width - 30, yPos);
+        ctx.fillText('Chi Phí Gốc', baseWidth - 150, yPos);
+        ctx.fillText('Thanh Toán', baseWidth - 30, yPos);
 
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         yPos += 8;
         ctx.beginPath();
         ctx.moveTo(30, yPos);
-        ctx.lineTo(canvas.width - 30, yPos);
+        ctx.lineTo(baseWidth - 30, yPos);
         ctx.stroke();
 
         yPos += 25;
 
+        /* Participants */
         ctx.font = '13px Arial';
         ctx.fillStyle = '#000000';
-
         participants.forEach((p) => {
             const payment = getPayment(p.id);
 
             ctx.textAlign = 'left';
             ctx.fillText(p.name, 30, yPos);
             ctx.textAlign = 'right';
-            ctx.fillText(formatCurrency(p.amount), canvas.width - 150, yPos);
+            ctx.fillText(formatCurrency(p.amount), baseWidth - 150, yPos);
             ctx.font = 'bold 13px Arial';
-            ctx.fillText(formatCurrency(payment), canvas.width - 30, yPos);
+            ctx.fillText(formatCurrency(payment), baseWidth - 30, yPos);
             ctx.font = '13px Arial';
 
             yPos += 40;
@@ -101,25 +111,37 @@ const ExportButtonSection: React.FC<ExportButtonSectionProps> = ({
         ctx.font = 'bold 16px Arial';
         ctx.fillStyle = '#16a34a';
         ctx.textAlign = 'center';
-        ctx.fillText(`Tổng: ${formatCurrency(totalAfterDiscount)}`, canvas.width / 2, yPos);
+        ctx.fillText(`Tổng: ${formatCurrency(totalAfterDiscount)}`, baseWidth / 2, yPos);
 
+        /* QR code */
         if (qrImage) {
             yPos += 40;
             ctx.fillStyle = '#000000';
             ctx.font = 'bold 14px Arial';
-            ctx.fillText('Mã QR Chuyển Khoản', canvas.width / 2, yPos);
+            ctx.fillText('Mã QR Chuyển Khoản', baseWidth / 2, yPos);
 
             try {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
 
-                await new Promise((resolve, reject) => {
+                await new Promise<void>((resolve, reject) => {
                     img.onload = () => {
                         const qrSize = 160;
-                        const qrX = (canvas.width - qrSize) / 2;
+                        const qrX = (baseWidth - qrSize) / 2;
                         const qrY = yPos + 20;
-                        ctx.drawImage(img, qrX, qrY, qrSize, qrSize);
-                        resolve(null);
+
+                        // Giữ tỉ lệ QR gốc
+                        const ratio = img.width / img.height;
+                        let drawWidth = qrSize;
+                        let drawHeight = qrSize;
+                        if (ratio > 1) {
+                            drawHeight = qrSize / ratio;
+                        } else if (ratio < 1) {
+                            drawWidth = qrSize * ratio;
+                        }
+
+                        ctx.drawImage(img, qrX, qrY, drawWidth, drawHeight);
+                        resolve();
                     };
                     img.onerror = reject;
                     img.src = qrImage;
