@@ -1,0 +1,82 @@
+/* =================== Imports =================== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* =================== Layer Order =================== */
+@layer theme, base,
+utilities, components;
+
+/* =================== Tailwind Directives =================== */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* =================== Project Styles =================== */
+@import './base.css';
+@import './utilities.css';
+@import './components.css';
+
+/* =================== Custom Variants =================== */
+@custom-variant dark (&:is(.dark *));
+
+/* =================== Theme Definitions =================== */
+:root {
+    --background: hsl(190 100% 98%);
+    --foreground: hsl(210 25% 15%);
+
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(210 25% 15%);
+
+    --primary: hsl(202 92% 45%);
+    --primary-foreground: hsl(0 0% 100%);
+
+    --secondary: hsl(164 70% 42%);
+    --secondary-foreground: hsl(0 0% 100%);
+
+    --accent: hsl(282 70% 60%);
+    --accent-foreground: hsl(0 0% 100%);
+
+    --muted: hsl(200 40% 92%);
+    --muted-foreground: hsl(210 10% 40%);
+
+    --destructive: hsl(0 85% 58%);
+    --destructive-foreground: hsl(0 0% 100%);
+
+    --border: hsl(200 20% 85%);
+    --input: hsl(200 20% 85%);
+
+    --ring: hsl(202 92% 45%);
+
+    --radius: 0.6rem;
+}
+
+@theme inline {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+
+    --color-ring: var(--ring);
+}

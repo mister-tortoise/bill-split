@@ -1,0 +1,38 @@
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply from-background to-muted text-foreground min-h-screen bg-linear-to-br;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    /* =================== Typography =================== */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span {
+        margin-bottom: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: 600;
+    }
+
+    a {
+        @apply text-primary no-underline;
+    }
+
+    button {
+        cursor: pointer;
+    }
+}
